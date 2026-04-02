@@ -2,9 +2,10 @@
 const typewriter = document.getElementById('typewriter');
 const phrases = [
     'Desenvolvedor Full Stack',
-    'Foco em soluções eficientes',
     'arquitetura de software',
-    'UI/UX'
+    'UI/UX',
+    'Java, Spring Boot, React',
+    'Python, FastAPI'
 ];
 let phraseIndex = 0;
 let charIndex = 0;
