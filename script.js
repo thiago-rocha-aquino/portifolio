@@ -2,9 +2,9 @@
 const typewriter = document.getElementById('typewriter');
 const phrases = [
     'Desenvolvedor Full Stack',
-    'Apaixonado por Tecnologia',
-    'Criador de Soluções Digitais',
-    'UI/UX Enthusiast'
+    'Foco em soluções eficientes',
+    'arquitetura de software',
+    'UI/UX'
 ];
 let phraseIndex = 0;
 let charIndex = 0;
@@ -154,25 +154,58 @@ filterBtns.forEach(btn => {
 // ========== Contact Form ==========
 const contactForm = document.getElementById('contactForm');
 
-contactForm.addEventListener('submit', (e) => {
+contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-
-    const formData = new FormData(contactForm);
-    const data = Object.fromEntries(formData);
-
-    // Replace with your form handling logic (e.g., EmailJS, Formspree, etc.)
-    console.log('Form data:', data);
 
     const btn = contactForm.querySelector('button[type="submit"]');
     const originalText = btn.textContent;
-    btn.textContent = 'Mensagem Enviada!';
-    btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
 
-    setTimeout(() => {
-        btn.textContent = originalText;
-        btn.style.background = '';
-        contactForm.reset();
-    }, 3000);
+    const formData = new FormData(contactForm);
+
+    try {
+        const response = await fetch('https://formspree.io/f/xlgolqdv', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            btn.textContent = 'Mensagem Enviada!';
+            btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+                btn.disabled = false;
+                contactForm.reset();
+            }, 3000);
+        } else {
+            const errorData = await response.json();
+            console.error('Erro do Formspree:', errorData);
+            // Formspree pode retornar erros em formatos diferentes. Ex: {error: "message"} ou {errors: [{field: "name", message: "is required"}]}
+            const errorMessage = errorData.errors ? errorData.errors.map(e => e.message).join(', ') : errorData.error || 'Erro ao Enviar';
+
+            btn.textContent = errorMessage;
+            btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+                btn.disabled = false;
+            }, 5000); // Tempo maior para o usuário ler a mensagem de erro
+        }
+    } catch (error) {
+        console.error('Erro de rede ou de submissão:', error);
+        btn.textContent = 'Erro de Rede';
+        btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+            btn.disabled = false;
+        }, 4000);
+    }
 });
 
 // ========== Fade In Keyframe (injected) ==========
