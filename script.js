@@ -5,7 +5,8 @@ const phrases = [
     'arquitetura de software',
     'UI/UX',
     'Java, Spring Boot, React',
-    'Python, FastAPI'
+    'Python, FastAPI',
+    "e muito mais..."
 ];
 let phraseIndex = 0;
 let charIndex = 0;
